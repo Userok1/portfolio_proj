@@ -1,0 +1,1 @@
+body{font-family:sans-serif;max-width:800px;margin:0 auto;padding:1em}nav{display:flex;gap:1em;align-items:center;border-bottom:1px solid #ccc;padding-bottom:.5em}nav span{margin-left:auto}.card{border:1px solid #ddd;padding:.5em;margin:.5em 0}.err{color:#fff;background:#c00;padding:.5em}.ok{color:#fff;background:#090;padding:.5em}input,select,button{margin:.2em;padding:.3em}

@@ -1,0 +1,101 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"  # хост-порт 5433: 5432 занят системным PostgreSQL окружения
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth-api:
+    build: ./services/auth-service
+    ports:
+      - "8001:8000"
+    env_file:
+      - ./services/auth-service/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/auth_db
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      # Секреты (JWT_SECRET и т.д.) берутся из services/auth-service/.env.
+      # Не дублировать их здесь: environment: перекрывает env_file.
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  shop-api:
+    build: ./services/shop-service
+    ports:
+      - "8002:8000"
+    env_file:
+      - ./services/shop-service/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/shop_db
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      AUTH_INTROSPECT_URL: http://auth-api:8000/auth/introspect
+      # Остальное (ORDER_TTL_MIN) — из services/shop-service/.env.
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  pay-api:
+    build: ./services/payment-service
+    ports:
+      - "8003:8000"
+    env_file:
+      - ./services/payment-service/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/billing_db
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      AUTH_INTROSPECT_URL: http://auth-api:8000/auth/introspect
+      # Stripe-ключи — из services/payment-service/.env.
+      # Не дублировать их здесь: environment: перекрывает env_file.
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  frontend:
+    build: ./services/frontend-service
+    ports:
+      - "8004:8000"
+    env_file:
+      - ./services/frontend-service/.env
+    environment:
+      AUTH_API_URL: http://auth-api:8000
+      SHOP_API_URL: http://shop-api:8000
+      PAY_API_URL: http://pay-api:8000
+    depends_on:
+      auth-api:
+        condition: service_started
+      shop-api:
+        condition: service_started
+      pay-api:
+        condition: service_started
+
+volumes:
+  pgdata:

@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block t %} — админка{% endblock %}{% block c %}
+<h1>Товары (админка MVP: любой залогиненный)</h1>
+<form method="post" action="/admin/products">
+<input name="sku" placeholder="SKU" required><input name="title" placeholder="Название" required>
+<input name="price" placeholder="Цена" required><input name="qty" type="number" value="0" min="0">
+<button>Создать</button></form>
+{% for p in products %}<div class="card">{{ p.sku }} — {{ p.title }} — {{ p.price }} ₽</div>{% endfor %}
+{% endblock %}

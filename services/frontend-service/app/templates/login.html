@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block t %} — вход{% endblock %}{% block c %}
+<h1>Вход</h1>
+<form method="post" action="/login"><input name="email" type="email" required><input name="password" type="password" required><input type="hidden" name="next" value="{{ next }}"><button>Войти</button></form>
+{% endblock %}

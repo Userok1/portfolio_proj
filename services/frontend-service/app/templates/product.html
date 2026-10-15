@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block t %} — {{ p.title }}{% endblock %}{% block c %}
+<h1>{{ p.title }}</h1>
+<p>{{ p.sku }} — <b>{{ p.price }} ₽</b></p>
+<p>{{ p.description }}</p>
+{% if email %}
+<form method="post" action="/cart/add"><input type="hidden" name="pid" value="{{ p.id }}">
+<input type="number" name="qty" value="1" min="1"><button>В корзину</button></form>
+{% else %}<p><a href="/login">Войдите</a>, чтобы купить.</p>{% endif %}
+{% endblock %}

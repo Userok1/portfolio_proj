@@ -1,0 +1,10 @@
+# Секреты — никогда в git!
+.env
+services/*/.env
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.e-commerse

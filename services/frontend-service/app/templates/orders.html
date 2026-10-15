@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block t %} — заказы{% endblock %}{% block c %}
+<h1>Мои заказы</h1>
+{% for o in orders %}
+<div class="card"><a href="/orders/{{ o.id }}">{{ o.id[:8] }}</a> {{ o.status }} — {{ o.total }} ₽</div>
+{% else %}<p>Нет заказов.</p>{% endfor %}
+{% endblock %}

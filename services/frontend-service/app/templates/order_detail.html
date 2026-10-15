@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block t %} — заказ{% endblock %}{% block c %}
+<h1>Заказ {{ o.id[:8] }}</h1>
+{% if paid and o.status == "paid" %}<p class="ok">Оплата прошла! Спасибо за заказ.</p>{% endif %}
+<p>Статус: <b>{{ o.status }}</b> | {{ o.total }} ₽ | {{ o.delivery_method }} | {{ o.address }}</p>
+{% for i in o["items"] %}<div class="card">{{ i.title_snapshot }} × {{ i.qty }} = {{ i.price_snapshot }} ₽</div>{% endfor %}
+{% if pay %}
+<p>Оплата: {{ pay.status }}
+{% if o.status == "pending_payment" and pay.status == "pending" %}
+  {% if pay.pay_url %}<a href="{{ pay.pay_url }}"><button>Оплатить в Stripe</button></a>{% endif %}
+  <form method="post" action="/orders/{{ o.id }}/sync" style="display:inline"><button>Обновить статус</button></form>
+  <form method="post" action="/orders/{{ o.id }}/cancel-pay" style="display:inline"><button>Отменить оплату</button></form>
+{% endif %}</p>
+{% endif %}
+{% endblock %}

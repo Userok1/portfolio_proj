@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block t %} — оформление{% endblock %}{% block c %}
+<h1>Оформление</h1>
+<form method="post" action="/checkout">
+<input name="address" placeholder="Адрес" required style="width:300px">
+<select name="delivery"><option value="pickup">Самовывоз</option><option value="courier">Курьер</option></select>
+<button>Создать заказ</button></form>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block t %} — каталог{% endblock %}{% block c %}
+<h1>Товары</h1>
+{% for p in products %}
+<div class="card"><a href="/products/{{ p.id }}"><b>{{ p.title }}</b></a> {{ p.sku }} — {{ p.price }} ₽</div>
+{% else %}<p>Пока пусто.</p>{% endfor %}
+{% endblock %}

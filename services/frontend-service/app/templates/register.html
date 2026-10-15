@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block t %} — регистрация{% endblock %}{% block c %}
+<h1>Регистрация</h1>
+<form method="post" action="/register"><input name="email" type="email" required><input name="password" type="password" required><input type="hidden" name="next" value="{{ next }}"><button>Создать</button></form>
+{% endblock %}

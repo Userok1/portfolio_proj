@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block t %} — корзина{% endblock %}{% block c %}
+<h1>Корзина</h1>
+{% for i in items %}
+<div class="card">{{ i.title }} × {{ i.qty }} = {{ i.sum }} ₽
+<form method="post" action="/cart/remove/{{ i.product_id }}" style="display:inline"><button>Убрать</button></form></div>
+{% else %}<p>Пусто.</p>{% endfor %}
+{% if items %}<p><b>Итого: {{ total }} ₽</b></p><a href="/checkout">Оформить</a>{% endif %}
+{% endblock %}
